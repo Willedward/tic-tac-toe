@@ -79,7 +79,7 @@ const gameboard = (function() {
 })();
 
 
-
+//not in use will edit later
 const gamecontroller = (function(){
     
     let player1 = createPlayers("player1", "X")
@@ -218,7 +218,6 @@ const displaycontroller = (function (){
         }else{
             t3title.textContent = 'DRAW!';
         }
-        cleartiles();
     }
 
     function cleartiles(){
