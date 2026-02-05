@@ -9,15 +9,66 @@
 <body>
     
     <div class="container">
-        <div class="tic-tac-toe">
+        <div class="bigtitle">
+        <h1 class = "title">Welcome to Tic-tac-toe</h1>
+        </div>
+        <div class="rest">
+        <div class="player-info">
+            <h2 class = "announce">Please choose the players!</h2>
+            <form id = "playerform">
+                <div class="playerbox" id = "player1">
+                    <div class="player-title">
+                        Player 1, please enter your name
+                    </div>
+                    <div class="player-body">
+                        <label for = "p1">
+                            P1 Name: 
+                            <input type = "text" id = "p1" required>
+                        </label>
+                        <p>Mark : X</p>
+                    </div>
+                </div>
+                <div class="playerbox" id = "player2">
+                    <div class="player-title">
+                        Player 2, please enter your name
+                    </div>
+
+                    <div class="player-body">
+                        <label for = "p2">
+                            P2 Name:
+                            <input type = "text" id = "p2" required>
+                        </label>
+                        <p>Mark : O</p>
+                    </div>
+                </div>
+                <div class="collection-button">
+                    <button type = "submit" id = "playbtn">Play!</button>
+                    <button id = "resetbtn">Reset!</button>
+                </div>
+            </form>
+            
 
         </div>
-
-        <div class="player-info">
-
+        <div class="right-side">
+            <div class="t3-title">
+                Let the Games Begin!
+            </div>
+            <div class="tic-tac-toe">
+                <div class="square" id = "1">
+                </div>
+                <div class="square" id = "2"></div>
+                <div class="square" id = "3"></div>
+                <div class="square" id = "4"></div>
+                <div class="square" id = "5"></div>
+                <div class="square" id = "6"></div>
+                <div class="square" id = "7"></div>
+                <div class="square" id = "8"></div>
+                <div class="square" id = "9"></div>
+            </div>
+        </div>
         </div>
     </div>
-
+    
     <script src = "javascript.js"></script>
 </body>
 </html>

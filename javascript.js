@@ -40,15 +40,31 @@ const gameboard = (function() {
             if(board[0][i] === board[1][i] && board[1][i] === board[2][i] && board[0][i] != ''){
                 return [true, board[0][i]];
             }
+        }
+        if(board[0][0] === board[1][1] && board[1][1] === board[2][2] && board[0][0] != ''){
+                    return [true, board[0][0]];
+        }
+        if(board[0][2] === board[1][1] && board[1][1] === board[2][0] && board[1][1] != ''){
+            return [true, board[0][2]];
+        }
+        return [false];
     }
-    if(board[0][0] === board[1][1] && board[1][1] === board[2][2] && board[0][0] != ''){
-                return [true, board[0][0]];
-    }
-    if(board[0][2] === board[1][1] && board[1][1] === board[2][0] && board[1][1] != ''){
-        return [true, board[0][2]];
-    }
-    return [false];
 
+    function returncoord(num){
+        let list_of_coord = [[0,0], [0,1], [0,2], [1,0], [1,1], [1,2], [2,0], [2,1], [2,2]];
+        return list_of_coord[num-1];
+    }
+
+    function count(){
+        let counter = 0;
+        for(let i = 0; i < 3; i++){
+            for(let j = 0; j < 3; j++){
+                if(board[i][j] != ''){
+                    counter += 1;
+                }
+            }
+        }
+        return counter;
     }
     return {
         reset,
@@ -56,7 +72,9 @@ const gameboard = (function() {
         get_board,
         show_board,
         check_avail,
-        checkwinner
+        checkwinner,
+        returncoord,
+        count
     };
 })();
 
@@ -108,7 +126,117 @@ const gamecontroller = (function(){
     return {playround};
 })();
 
-gamecontroller.playround();
+//gamecontroller.playround();
+
+const displaycontroller = (function (){
+    const form = document.querySelector('form');
+    let gameactive = null;
+    let player1 = null;
+    let player2 = null;
+    let currentplayer = null; 
+    let otherplayer = null;
+    form.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const p1 = document.getElementById('p1');
+        const p2 = document.getElementById('p2');
+        console.log(p1.value);
+        player1 = createPlayers(p1.value, 'X');
+        player2 = createPlayers(p2.value, 'O');
+        console.log("player1: ",player1.name);
+        gameboard.reset();
+        const t3title = document.querySelector('.t3-title');
+        currentplayer = player1;
+        t3title.textContent = `${currentplayer.name}'s turn! [${currentplayer.sign}]`;
+        gameactive = true;
+    });
+
+    const buttons = document.querySelectorAll('.square');
+    buttons.forEach((button) => {
+        button.addEventListener('click', () =>{
+            if(gameactive == false) return;
+            const idx = gameboard.returncoord(button.id);
+            
+            const turns = gameboard.count();
+            if(turns%2 == false) {currentplayer = player1; otherplayer = player2;}
+            else{currentplayer = player2; otherplayer = player1;}
+            gameboard.set_cell(currentplayer.sign, idx);
+            turntiles(currentplayer, button.id);
+            gameboard.show_board();
+            console.log("gameboardcounter", gameboard.count());
+            
+            let winner = null;
+            if(gameboard.checkwinner()[0] == true){
+                //win
+                if(gameboard.checkwinner()[1] == 'X') winner = player1;
+                else winner = player2;
+                displaywin(winner, "win");
+                gameactive = false;
+            }else if(gameboard.count() == 9){
+                //draw
+                displaywin(winner, "draw")
+                gameactive = false;
+            }else{
+            //after check if not win.
+            const t3title = document.querySelector('.t3-title');
+            t3title.textContent = `${otherplayer.name}'s turn! [${otherplayer.sign}]`;
+            }
+        });
+    });
 
 
+    function turntiles(player, btnid){
+        const btn = document.getElementById(btnid);
+        let txt = document.createElement('div');
+        txt.classList.add('signed'); 
+        btn.appendChild(txt);
+        if(checkoccupied(btn)){
+            const t3title = document.querySelector('.t3-title');
+            t3title.textContent = `Sorry ${otherplayer.name}, it is occupied!`;
+        }else{
+        appendtiles(btn, player.sign, txt);
+        }
+    }
+    function appendtiles(btn, sign, txt){
+        txt.textContent = sign;
+        btn.classList.add('active');
+        if(sign == 'X') btn.classList.add('activeblue');
+        else btn.classList.add('activered');
+    }
 
+    function checkoccupied(btn){
+        if(btn.classList.contains('active')){
+            return true;
+        }else return false;
+    }
+
+    function displaywin(winner, condition){
+        const t3title = document.querySelector('.t3-title');
+        if(condition == "win"){
+        t3title.textContent = `${winner.name} wins!`; 
+        }else{
+            t3title.textContent = 'DRAW!';
+        }
+        cleartiles();
+    }
+
+    function cleartiles(){
+        const buttons = document.querySelectorAll('.square');
+        buttons.forEach((button) =>{
+            const signed = button.querySelector('.signed')
+            if(signed){
+                signed.remove();
+            }
+            button.classList.remove('active', 'activered', 'activeblue');
+        });
+        gameboard.reset();
+        form.reset();
+    };
+
+    const reset = document.querySelector('#resetbtn');
+    reset.addEventListener('click', (e)=>{
+        e.preventDefault();
+        cleartiles();
+        gameactive = false;
+    });
+
+})();
