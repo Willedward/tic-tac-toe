@@ -159,8 +159,9 @@ const displaycontroller = (function (){
             const turns = gameboard.count();
             if(turns%2 == false) {currentplayer = player1; otherplayer = player2;}
             else{currentplayer = player2; otherplayer = player1;}
-            gameboard.set_cell(currentplayer.sign, idx);
-            turntiles(currentplayer, button.id);
+            
+
+            turntiles(currentplayer, button.id, idx);
             gameboard.show_board();
             console.log("gameboardcounter", gameboard.count());
             
@@ -184,7 +185,7 @@ const displaycontroller = (function (){
     });
 
 
-    function turntiles(player, btnid){
+    function turntiles(player, btnid, idx){
         const btn = document.getElementById(btnid);
         let txt = document.createElement('div');
         txt.classList.add('signed'); 
@@ -193,7 +194,8 @@ const displaycontroller = (function (){
             const t3title = document.querySelector('.t3-title');
             t3title.textContent = `Sorry ${otherplayer.name}, it is occupied!`;
         }else{
-        appendtiles(btn, player.sign, txt);
+            gameboard.set_cell(player.sign, idx);
+            appendtiles(btn, player.sign, txt);
         }
     }
     function appendtiles(btn, sign, txt){
